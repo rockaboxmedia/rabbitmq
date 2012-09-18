@@ -50,6 +50,8 @@ action :set_permissions do
 end
 
 action :set_user_tags do
+  # there's no way to list existing tags, but this method overwrites
+  # existing tags so it is still idempotent
   execute "rabbitmqctl set_user_tags #{new_resource.user} #{new_resource.tags}" do
     Chef::Log.info "Setting RabbitMQ user tags for '#{new_resource.user}'."
     new_resource.updated_by_last_action(true)
