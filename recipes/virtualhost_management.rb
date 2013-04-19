@@ -1,8 +1,8 @@
 #
 # Cookbook Name:: rabbitmq
-# Resource:: plugin
+# Recipe:: virtualhost_management
 #
-# Copyright 2011, Opscode, Inc.
+# Copyright 2013, Grégoire Seux
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,7 +17,14 @@
 # limitations under the License.
 #
 
-actions :enable, :disable
-default_action :enable
+include_recipe "rabbitmq::default"
 
-attribute :plugin, :kind_of => String, :name_attribute => true
+virtualhosts = node['rabbitmq']['virtualhosts']
+
+virtualhosts.each do |virtualhost|
+  rabbitmq_vhost virtualhost do
+    action :add
+    notifies :restart, resources(:service => node['rabbitmq']['service_name'])
+  end
+end
+

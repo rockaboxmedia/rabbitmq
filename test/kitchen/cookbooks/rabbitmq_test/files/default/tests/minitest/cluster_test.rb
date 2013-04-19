@@ -1,8 +1,5 @@
 #
-# Cookbook Name:: rabbitmq
-# Resource:: plugin
-#
-# Copyright 2011, Opscode, Inc.
+# Copyright 2012, Opscode, Inc. <legal@opscode.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,7 +14,16 @@
 # limitations under the License.
 #
 
-actions :enable, :disable
-default_action :enable
+describe "rabbitmq_test::cluster" do
 
-attribute :plugin, :kind_of => String, :name_attribute => true
+  it 'writes the erlang cookie file' do
+    file("/var/lib/rabbitmq/.erlang.cookie").must_exist
+  end
+
+  it 'writes cluster configuration to the config file' do
+    file("/etc/rabbitmq/rabbitmq.conf").must_match(
+      /^    {cluster_nodes, [.*]},$/
+    )
+  end
+
+end

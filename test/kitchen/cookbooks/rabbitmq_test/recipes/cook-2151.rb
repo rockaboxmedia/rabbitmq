@@ -1,8 +1,8 @@
 #
-# Cookbook Name:: rabbitmq
-# Resource:: plugin
+# Cookbook Name:: rabbitmq_test
+# Recipe:: cook-2151
 #
-# Copyright 2011, Opscode, Inc.
+# Copyright 2012, Opscode, Inc. <legal@opscode.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,7 +17,10 @@
 # limitations under the License.
 #
 
-actions :enable, :disable
-default_action :enable
+node.set['rabbitmq']['disk_free_limit_relative'] = 1.0
+node.set['rabbitmq']['vm_memory_high_watermark'] = 0.5
 
-attribute :plugin, :kind_of => String, :name_attribute => true
+log "#{cookbook_name}::#{recipe_name} tests that COOK-2151 is implemented."
+
+include_recipe "yum::epel" if node['platform_family'] == 'rhel'
+include_recipe "rabbitmq::default"

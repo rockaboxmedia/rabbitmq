@@ -1,8 +1,5 @@
 #
-# Cookbook Name:: rabbitmq
-# Resource:: plugin
-#
-# Copyright 2011, Opscode, Inc.
+# Copyright 2012, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,7 +14,17 @@
 # limitations under the License.
 #
 
-actions :enable, :disable
-default_action :enable
+module Helpers
+  module RabbitMQ
+    require 'chef/mixin/shell_out'
+    include Chef::Mixin::ShellOut
+    include MiniTest::Chef::Assertions
+    include MiniTest::Chef::Context
+    include MiniTest::Chef::Resources
 
-attribute :plugin, :kind_of => String, :name_attribute => true
+    def plugin_enabled?(plugin_name)
+      plugin_list = shell_out("rabbitmq-plugins list -e '#{plugin_name}'")
+      plugin_list.stdout.include?(/\[[Ee]\] #{plugin_name}/)
+    end
+  end
+end

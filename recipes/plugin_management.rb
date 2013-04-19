@@ -1,8 +1,8 @@
 #
 # Cookbook Name:: rabbitmq
-# Resource:: plugin
+# Recipe:: plugin_management
 #
-# Copyright 2011, Opscode, Inc.
+# Copyright 2013, Grégoire Seux
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,7 +17,22 @@
 # limitations under the License.
 #
 
-actions :enable, :disable
-default_action :enable
+include_recipe "rabbitmq::default"
 
-attribute :plugin, :kind_of => String, :name_attribute => true
+enabled_plugins = node['rabbitmq']['enabled_plugins']
+
+enabled_plugins.each do |plugin|
+  rabbitmq_plugin plugin do
+    action :enable
+    notifies :restart, "service[#{node['rabbitmq']['service_name']}]"
+  end
+end
+
+disabled_plugins = node['rabbitmq']['disabled_plugins']
+
+disabled_plugins.each do |plugin|
+  rabbitmq_plugin plugin do
+    action :disable
+    notifies :restart, "service[#{node['rabbitmq']['service_name']}]"
+  end
+end
