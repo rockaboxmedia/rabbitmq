@@ -20,6 +20,7 @@
 #
 
 include_recipe "erlang"
+include_recipe "apt"
 
 directory "/etc/rabbitmq/" do
   owner "root"
@@ -50,7 +51,9 @@ when "debian", "ubuntu"
 
   # installs the required setsid command -- should be there by default but just in case
   package "util-linux"
-  package "rabbitmq-server"
+  package "rabbitmq-server" do
+    options "--force-yes"
+  end
 
 when "redhat", "centos", "scientific", "amazon", "fedora"
 
